@@ -42,7 +42,6 @@ export const MainTab = memo<IMainTabProps>(({ navigation, route }) => {
             <View />
             // <Foundation name="home" size={24} color={focused ? 'black' : '#b4b4b4'} />
           ),
-          ...tabBarStyles,
         }}
         name="HomeScreen"
         component={HomeScreen}
@@ -54,7 +53,6 @@ export const MainTab = memo<IMainTabProps>(({ navigation, route }) => {
             <View />
             // <MaterialIcons name="article" size={24} color={focused ? 'black' : '#b4b4b4'} />
           ),
-          ...tabBarStyles,
         }}
         name="ScrapScreen"
         component={ScrapScreen}
@@ -62,12 +60,6 @@ export const MainTab = memo<IMainTabProps>(({ navigation, route }) => {
     </Tab.Navigator>
   );
 });
-
-const tabBarStyles = {
-  tabBarInactiveTintColor: '#b4b4b4',
-  tabBarActiveTintColor: 'black',
-  tabBarLabelStyle: { fontFamily: 'Apple-800', fontSize: 12 },
-};
 
 const tabBarTheme = {
   tabBarStyle: {

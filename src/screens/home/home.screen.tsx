@@ -1,12 +1,11 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { RouteProp } from '@react-navigation/native';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Modal, Pressable, Text, TouchableOpacity } from 'react-native';
 import { IMainTabParamsList } from '../main';
-import { CtaButton } from '../../shared';
-
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { getData } from '../../api';
+import { IArticleType, useFetchArticle } from './hooks';
+import { EIconType, HeaderFilter } from '../../shared';
+import { ArticleListView } from './views';
 
 export type IHomeScreenParamList = {};
 
@@ -21,33 +20,78 @@ type IHomeScreenProps = {
   navigation: IHomeScreenNavigationProp;
   route: IHomeScreenRouteProp;
 };
+const mock_data = [
+  {
+    buttonTitle: '전체 헤드라인',
+    buttonIconType: EIconType.Calendar,
+    selected: false,
+    onPress: () => console.log(123),
+  },
+  {
+    buttonTitle: '헤드라인',
+    buttonIconType: EIconType.Search,
+    selected: false,
+    onPress: () => console.log(123),
+  },
+  {
+    buttonTitle: '전드라인',
+    selected: false,
+    onPress: () => console.log(123),
+  },
+];
 
 export const HomeScreen = memo<IHomeScreenProps>(() => {
-  const [newsList, setNewsList] = useState([]);
+  const [articleList, setArticleList] = useState<IArticleType[] | []>([]);
+  const [modalVisible, setModalVisible] = useState(true);
 
-  const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['search'],
-    queryFn: ({ pageParam = 1 }) => {
-      //@ts-ignore
-      getData({ pageParam });
-    },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) => {
-      const nextPage = pages.length + 1;
-      return 1;
-      // return lastPage?.data?.length === 0 ? undefined : nextPage;
-    },
+  const { getData } = useFetchArticle({
+    beginDate: '20220101',
+    endDate: '20220102',
+    page: 1,
+    query: '',
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getData();
+
+      if (!data) return;
+
+      setArticleList(data);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonWrapper}>
-        <CtaButton title="필터 적용하기" />
-      </View>
-      <View>
-        {newsList.map((list, index) => {
-          return <View />;
-        })}
+      <HeaderFilter filters={mock_data} />
+      <ArticleListView articleList={articleList} />
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <TouchableOpacity
+            style={styles.background}
+            activeOpacity={1}
+            onPressOut={() => setModalVisible(!modalVisible)}
+          >
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Hello World!</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
     </View>
   );
@@ -57,8 +101,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  buttonWrapper: {
-    width: 250,
-    height: 100,
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
