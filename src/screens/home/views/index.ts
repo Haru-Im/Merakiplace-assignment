@@ -1,2 +1,2 @@
-export * from './article-list';
-export * from './article-filter';
+export * from '../../../shared/article-list';
+export * from '../../../shared/article-filter';

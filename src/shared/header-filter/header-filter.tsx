@@ -11,7 +11,7 @@ export const HeaderFilter = memo<IHeaderFilterProps>(({ filters }) => {
   return (
     <View style={styles.container}>
       {filters.map((filterOption, index) => {
-        return <FilterOptionButton {...filterOption} />;
+        return <FilterOptionButton key={index} type="display" {...filterOption} />;
       })}
     </View>
   );
@@ -20,8 +20,11 @@ export const HeaderFilter = memo<IHeaderFilterProps>(({ filters }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: 'red',
     height: scaleSize(60),
     width: '100%',
+    alignItems: 'center',
+    paddingHorizontal: scaleSize(20),
+    backgroundColor: 'white',
+    gap: scaleSize(8),
   },
 });

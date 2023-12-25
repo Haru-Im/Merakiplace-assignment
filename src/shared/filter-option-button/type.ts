@@ -8,4 +8,5 @@ export type FilterOptions = {
   buttonIconType?: EIconType;
   selected: boolean;
   onPress: () => void;
+  value: string;
 };

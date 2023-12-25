@@ -1,12 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from 'react';
-import {
-  View,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { View, Modal, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { scaleSize } from '../../shared';
 
 export type IModalContext = {
   openModal: ({ prop }: { prop: ReactNode }) => void;
@@ -20,7 +14,7 @@ type IModalProviderProps = {
 };
 
 export const ModalProvider = ({ children }: IModalProviderProps) => {
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const [content, setContent] = useState<ReactNode | null>(null);
 
   const openModal = ({ prop }: { prop: ReactNode }) => {
@@ -34,26 +28,29 @@ export const ModalProvider = ({ children }: IModalProviderProps) => {
   return (
     <ModalContext.Provider value={{ openModal, closeModal }}>
       <View style={styles.container}>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <TouchableOpacity
+            style={styles.background}
+            activeOpacity={1}
+            onPressOut={() => setModalVisible(!modalVisible)}
           >
-            <TouchableOpacity
-              style={styles.background}
-              activeOpacity={1}
-              onPressOut={() => setModalVisible(!modalVisible)}
-            >
-              <TouchableWithoutFeedback>
-                <View style={styles.contentContainer}>{content}</View>
-              </TouchableWithoutFeedback>
-            </TouchableOpacity>
-          </Modal>
-        </View>
+            <TouchableWithoutFeedback>
+              <View style={styles.contentPadding}>
+                <View style={styles.contentContainer}>
+                  {/* <View style={{ width: 100, height: 400, backgroundColor: 'red' }} /> */}
+                  {content}
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        </Modal>
       </View>
       {children}
     </ModalContext.Provider>
@@ -77,25 +74,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
   background: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  contentPadding: {
+    paddingHorizontal: scaleSize(20),
+    width: '100%',
+  },
   contentContainer: {
-    width: Dimensions.get('screen').width - 24,
-    minHeight: 400,
+    width: '100%',
+    minHeight: 200,
     backgroundColor: 'white',
+    padding: scaleSize(20),
     borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

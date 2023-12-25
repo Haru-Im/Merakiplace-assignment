@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { EGlocations, GLOCATIONS_KO, IArticle, IFilter } from '../../../types';
+import { useDidUpdate } from 'rooks';
+import { useScrap } from '../../../providers';
 import { API_KEY, API_URL } from '@env';
 
 export type IUseFetchArticleType = {
@@ -16,6 +18,8 @@ export const useFetchArticle = () => {
     query: '',
     country: [],
   });
+
+  const { scrappedArticleList } = useScrap();
 
   const [page, setPage] = useState(1);
 
@@ -63,7 +67,6 @@ export const useFetchArticle = () => {
       const url = endpointUrl(props);
 
       try {
-        console.log(url.join('&'));
         const res = await fetch(url.join('&'));
 
         if (!res.ok) {
@@ -104,12 +107,11 @@ export const useFetchArticle = () => {
     });
   };
 
-  useEffect(() => {
+  useDidUpdate(() => {
     fetchNextPage();
   }, [page]);
 
   useEffect(() => {
-    console.log('filter Applied and fetch');
     fetchData();
   }, [filter]);
 
@@ -120,12 +122,19 @@ export const useFetchArticle = () => {
       ? `${GLOCATIONS_KO[filter.country[0] as EGlocations]} 외 ${filter.country.length - 1}개`
       : GLOCATIONS_KO[filter.country[0] as EGlocations];
 
+  const filteredScrappedArticleList = articleList.filter((article) =>
+    scrappedArticleList.some((scrappedArticle: IArticle) => article._id === scrappedArticle._id),
+  );
+
+  const isEmpty = filteredScrappedArticleList.length === 0 || scrappedArticleList.length === 0;
+
   return {
     getData,
     fetchMore,
-    articleList,
+    articleList: queryValue ? filteredScrappedArticleList : scrappedArticleList,
     applyFilter,
     isFetching,
     filter: { queryValue, dateValue, countryValue, countries: filter.country } as IFilter,
+    isEmpty,
   };
 };
