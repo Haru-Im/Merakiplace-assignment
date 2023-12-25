@@ -4,19 +4,13 @@ import { RouteProp } from '@react-navigation/native';
 import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { IMainTabParamsList } from '../main';
 
-import {
-  ArticleFilterView,
-  ArticleListView,
-  CtaButton,
-  EIconType,
-  HeaderFilter,
-  SheetSvgComponent,
-  scaleSize,
-} from '../../shared';
+import { CtaButton, EIconType, HeaderFilter, SheetSvgComponent, scaleSize } from '../../shared';
 
 import { useModal } from '../../providers';
 import { GLOCATIONS_KO } from '../../types';
 import { useFetchArticle } from './hooks';
+import { ArticleListView } from '../../shared/article-list';
+import { ArticleFilterView } from '../../shared/article-filter';
 
 export type IScrapScreenParamList = {};
 

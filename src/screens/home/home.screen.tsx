@@ -4,16 +4,12 @@ import { RouteProp } from '@react-navigation/native';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { IMainTabParamsList } from '../main';
 import { useFetchArticle } from './hooks';
-import {
-  ArticleFilterView,
-  ArticleListView,
-  EIconType,
-  HeaderFilter,
-  scaleSize,
-} from '../../shared';
+import { EIconType, HeaderFilter, scaleSize } from '../../shared';
 
 import { useModal } from '../../providers';
 import { GLOCATIONS_KO } from '../../types';
+import { ArticleFilterView } from '../../shared/article-filter';
+import { ArticleListView } from '../../shared/article-list';
 
 export type IHomeScreenParamList = {};
 
